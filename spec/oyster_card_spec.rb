@@ -14,9 +14,13 @@ describe OysterCard do
   describe '#top up' do
 
     it 'should top up the card' do
-      val = rand(100)
+      val = rand(90)
       subject.top_up(val)
       expect(subject.balance).to eq val
+    end
+
+    it "shouldn't let an oyster card top up more than 90" do
+      expect { subject.top_up(91) }.to raise_error("This is above maximum balance!")
     end
 
   end
