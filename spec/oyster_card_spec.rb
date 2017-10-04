@@ -1,6 +1,6 @@
 require 'oyster_card.rb'
 
-describe OysterCard do
+describe Oystercard do
   describe '#balance' do
     it 'tells customer whether the card has a balance' do
       expect(subject.balance).to eq 0
@@ -18,24 +18,29 @@ describe OysterCard do
     end
   end
 
-  describe '#deduct' do
-    it 'should deduct money from the card' do
-      ded = rand(100)
-      balance = subject.balance
-      subject.deduct(ded)
-      expect(subject.balance).to eq balance - ded
-    end
-  end
-
   describe '#touch_in' do
     it 'records when the card has been touched in' do
-      expect(subject.touch_in).to eq true
+      subject.top_up(10)
+      subject.touch_in
+      expect(subject.in_use).to eq true
+    end
+    it 'will not touch if balance is insufficient' do
+      expect{ subject.touch_in }.to raise_error 'Insufficient funds to travel'
     end
   end
 
   describe '#touch_out' do
     it 'records when the card has been touched out' do
-      expect(subject.touch_out).to eq false
+      subject.top_up(10)
+      subject.touch_in
+      subject.touch_out
+      expect(subject.in_use).to eq false
+    end
+
+    it 'deducts the costs of a fare from balance upon touching out' do
+      subject.top_up(10)
+      subject.touch_in
+      expect{subject.touch_out}.to change{subject.balance}.by(-Oystercard::FARE)
     end
   end
 
@@ -44,5 +49,4 @@ describe OysterCard do
       expect(subject.in_journey?).to eq @in_use
     end
   end
-
 end
