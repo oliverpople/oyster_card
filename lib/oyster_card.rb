@@ -1,5 +1,5 @@
 class Oystercard
-  attr_accessor :balance, :in_use
+  attr_accessor :balance, :entry_station
 
   FARE = 1
 
@@ -12,17 +12,20 @@ class Oystercard
     @balance += amount
   end
 
-  def touch_in
+  def touch_in(entry_station)
     raise 'Insufficient funds to travel' if @balance < 1
-    @in_use = true
+    @entry_station = entry_station
   end
 
   def touch_out
-    @in_use = false
     @balance -= FARE
+    @entry_station = false
   end
 
   def in_journey?
-    @in_use
+    !!entry_station
   end
+
+
+
 end
